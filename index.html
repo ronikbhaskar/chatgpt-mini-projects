@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ChatGPT Mini-Project Series</title>
+    <style>
+      /* Add CSS styles here */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #F8F7F2;
+        color: #555;
+      }
+      header {
+        background-color: #393E46;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+        font-weight: normal;
+      }
+      nav {
+        background-color: #E7A2A6;
+        padding: 10px;
+      }
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      nav li {
+        display: inline-block;
+        margin-right: 20px;
+      }
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+      nav a:hover {
+        background-color: #fff;
+        color: #393E46;
+        text-decoration: none;
+      }
+      section {
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .project {
+        display: flex;
+        flex-direction: column;
+        margin: 10px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px #ccc;
+        transition: box-shadow 0.3s ease;
+        max-width: 800px;
+        flex: 1;
+      }
+
+      .welcome {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .project h2 {
+        margin-top: 0;
+      }
+
+      .project p {
+        margin-bottom: 0;
+        flex-grow: 1;
+      }
+      .project:hover {
+        box-shadow: 0px 0px 20px #ccc;
+      }
+      a.btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #d87093;
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      a.btn:hover {
+        background-color: #be5181;
+      }
+
+      a.btn:focus {
+        outline: none;
+        box-shadow: 0px 0px 0px 2px #fff, 0px 0px 0px 4px #d87093;
+      }
+
+      a.btn.view-project {
+        background-color: #ffa07a;
+      }
+
+      a.btn.view-project:hover {
+        background-color: #ff8c61;
+      }
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Programming Project Series</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="daylight/">Daylight</a></li>
+        <li><a href="chatumm/">ChatUMM</a></li>
+        <li><a href="the_daily_pi/">The Daily Pi</a></li>
+        <li><a href="ukulelify/">Ukulelify</a></li>
+      </ul>
+    </nav>
+    <div class="welcome">
+        <p>Welcome to the ChatGPT Mini-Project Series! This is an experiment on the ability of ChatGPT to reduce friction in creative programming projects. This front page was also developed with the help of ChatGPT.</p>
+    </div>
+    <section>
+      <div class="project">
+        <h2>Daylight</h2>
+        <p>Rather than displaying 12 hour cycles, this clock's cycle represents the amount of sunlight in a given day. Once the sun sets, the clock stops.</p>
+        <a href="daylight/" class="btn view-project">View Project</a>
+      </div>
+      <div class="project">
+        <h2>ChatUMM</h2>
+        <p>ChatGPT offers too little flexibility in its language production capabilities. By using an untrained Markov model (UMM), the power of teaching language to an AI is in your hands.</p>
+        <a href="chatumm/" class="btn view-project">View Project</a>
+      </div>
+      <div class="project">
+        <h2>The Daily Pi</h2>
+        <p>The Infinite Monkey Theorem states that given a monkey, a typewriter, and an infinite amount of time, you could produce every known and unknown text in the universe. That sounds like animal cruelty, so I turned pi into our monkey, sending us millions of issues of newsletters.</p>
+        <a href="the_daily_pi/" class="btn view-project">View Project</a>
+      </div>
+      <div class="project">
+        <h2>Ukulelify</h2>
+        <p>Most learn the ukulele to play a few chords while they sing, but beginners struggle to transpose songs to chords they can play. This website automates that process, so ukulelists spend less time on theory and more time playing.</p>
+        <a href="ukulelify/" class="btn view-project">View Project</a>
+      </div>
+    </section>
+  </body>
+</html>

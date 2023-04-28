@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>The Daily Pi</title>
+    <style>
+      body {
+        font-family: 'Georgia', serif;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #F8F7F1;
+        color: #332F24;
+      }
+      header {
+        background-color: #332F24;
+        color: #F8F7F1;
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        font-weight: bold;
+        text-align: center;
+        padding: 1rem;
+        margin-bottom: 2rem;
+      }
+      h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      main {
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 2rem;
+        background-color: #F8F7F1;
+        box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+        border-top: 8px solid #332F24;
+        border-bottom: 8px solid #332F24;
+      }
+      article {
+        font-family: 'Times New Roman', serif;
+        font-size: 20px;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 1rem;
+      }
+      p {
+        margin-bottom: 1.5rem;
+        text-indent: 2rem;
+        word-wrap: break-word;
+      }
+      img {
+        max-width: 100%;
+        margin: 1.5rem 0;
+      }
+      label {
+        display: block;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+      input[type="text"] {
+        font-size: 16px;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        border: 1px solid #332F24;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>The Daily Pi</h1>
+      <form id="issue-form">
+        <label for="issue">Issue:</label>
+        <input type="text" id="issue" name="issue" value="0">
+      </form>
+    </header>
+    <main>
+      <article>
+        <h2>1000 Digits Starting from the Issue No.</h2>
+        <p id="article-text">Enter a starting number to begin.</p>
+      </article>
+    </main>
+    <script defer src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Ukulelify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      /* Fonts */
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+      /* Colors */
+      :root {
+        --primary-color: #ff8364;
+        --secondary-color: #1b1b1b;
+        --background-color: #aed1e6;
+      }
+      /* Layout */
+      body {
+        font-family: 'Roboto', sans-serif;
+        background-color: var(--background-color);
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        height: 100vh;
+      }
+      /* Header */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+      }
+      .header h1 {
+        color: var(--primary-color);
+        font-size: 36px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      /* Input section */
+      .input-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 30px;
+      }
+      .input-section label {
+        display: block;
+        width: 100%;
+        max-width: 120px;
+        color: var(--secondary-color);
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      .input-section input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        font-size: 18px;
+        background-color: #f5f5f5;
+        color: #555;
+        transition: box-shadow 0.3s ease-in-out;
+      }
+      .input-section input:focus {
+        outline: none;
+        box-shadow: 0px 0px 5px var(--primary-color);
+      }
+      .input-section button {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+      }
+      .input-section button:hover {
+        background-color: #f26522;
+      }
+      /* Output section */
+      .output-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+      .output-section h2 {
+        font-size: 24px;
+        font-weight: bold;
+       
+    }
+      .output-section ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      .output-section ul li {
+        font-size: 20px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        color: var(--secondary-color);
+      }
+      /* Footer */
+      .footer {
+        text-align: center;
+        color: var(--secondary-color);
+        font-size: 16px;
+        padding-top: 30px;
+      }
+      .footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease-in-out;
+      }
+      .footer a:hover {
+        color: #f26522;
+      }
+      canvas {
+        width: 100px;
+        height: 200px;
+        margin-top: 20px;
+      }
+      /* Media queries */
+      @media screen and (max-width: 768px) {
+        .container {
+          padding: 10%;
+        }
+        .header h1 {
+          font-size: 24px;
+        }
+        .input-section label,
+        .input-section input {
+          max-width: 100%;
+          margin-bottom: 20px;
+        }
+        .output-section ul li {
+          font-size: 18px;
+        }
+      }
+      #description {
+        bottom: 100px;
+        width: 80%;
+        margin: 0 auto;
+        text-align: center;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #555;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>&#9835; Ukulelify</h1>
+        <!-- <canvas id="ukulele-canvas"></canvas> -->
+      </header>
+      <section class="input-section">
+        <div>
+          <label for="input-chords">Chords</label>
+          <input type="text" id="input-chords" placeholder="Enter chords here...">
+        </div>
+        <button id="transpose-btn" onclick="parseChords()">Transpose to <br>Uke-Friendly Key</button>
+      </section>
+      <section class="output-section">
+        <h2>Transposed Chords</h2>
+        <ul id="output-chords"></ul>
+      </section>
+      <section id="description">
+        <h2>How Ukulelify Works</h2>
+        <p>Ukulelify is a simple tool that allows you to easily transpose the chords of a song to the key of C major or A minor, the easiest keys on the ukulele. Simply enter the chords of the song (ex. E B C#m A), and Ukulelify will automatically transpose them and display the results.</p>
+      </section>      
+      <footer class="footer">
+        Made with ❤️ by <a href="https://github.com/ronikbhaskar">ChatGPT</a>
+      </footer>
+    </div>
+    <script>
+        const chordInput = document.getElementById("input-chords");
+        chordInput.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) { // check if Enter key was pressed
+                event.preventDefault(); // prevent default action (i.e. adding newline)
+                parseChords(); // call parseChords function
+            }
+        });
+
+        function parseChords() {
+            const chordInput = document.getElementById("input-chords").value;
+            const chords = chordInput.split(/[\s,]+/); // split on commas and whitespace
+            const key = getKey(chords);
+            const transposition = transposeChords(key, chords);
+            updateChords(transposition);
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+
+        const ids = [
+            {id: 0, chordNames: ['A']},
+            {id: 1, chordNames: ['A#', 'Bb']},
+            {id: 2, chordNames: ['B']},
+            {id: 3, chordNames: ['C']},
+            {id: 4, chordNames: ['C#', 'Db']},
+            {id: 5, chordNames: ['D']},
+            {id: 6, chordNames: ['D#', 'Eb']},
+            {id: 7, chordNames: ['E']},
+            {id: 8, chordNames: ['F']},
+            {id: 9, chordNames: ['F#', 'Gb']},
+            {id: 10, chordNames: ['G']},
+            {id: 11, chordNames: ['G#', 'Ab']},
+            {id: 12, chordNames: ['Am']},
+            {id: 13, chordNames: ['A#m', 'Bbm']},
+            {id: 14, chordNames: ['Bm']},
+            {id: 15, chordNames: ['Cm']},
+            {id: 16, chordNames: ['C#m', 'Dbm']},
+            {id: 17, chordNames: ['Dm']},
+            {id: 18, chordNames: ['D#m', 'Ebm']},
+            {id: 19, chordNames: ['Em']},
+            {id: 20, chordNames: ['Fm']},
+            {id: 21, chordNames: ['F#m', 'Gbm']},
+            {id: 22, chordNames: ['Gm']},
+            {id: 23, chordNames: ['G#m', 'Abm']},
+        ]
+
+        function chord2id(chord) {
+
+            for (let i = 0; i < ids.length; i++) {
+                if (ids[i].chordNames.includes(chord)) {
+                    return ids[i].id;
+                }
+            }
+
+            return -1;
+        }
+
+        function id2chord(id) {
+            for (let i = 0; i < ids.length; i++) {
+                if (ids[i].id == id) {
+                    return ids[i].chordNames;
+                }
+            }
+
+            return ['unknown'];
+        }
+
+        function argmax(array) {
+            if (array.length === 0) {
+                return -1;
+            }
+
+            let maxIndex = 0;
+            let maxValue = array[0];
+
+            for (let i = 1; i < array.length; i++) {
+                if (array[i] > maxValue) {
+                    maxValue = array[i];
+                    maxIndex = i;
+                }
+            }
+
+            return maxIndex;
+        }
+
+        function getKey(chords) {
+            chords = [...new Set(chords.map(capitalize).map(chord2id).filter(id => id != -1))];
+            const keys = [
+                {name: 'A major', tonic: 0, dominant: 7, chords: [0, 14, 16, 5, 7, 21, 23]},
+                {name: 'Bb major', tonic: 1, dominant: 8, chords: [1, 15, 17, 6, 8, 22, 12]},
+                {name: 'B major', tonic: 2, dominant: 9, chords: [2, 16, 18, 7, 9, 23, 13]},
+                {name: 'C major', tonic: 3, dominant: 10, chords: [3, 17, 19, 8, 10, 12, 14]},
+                {name: 'Db major', tonic: 4, dominant: 11, chords: [4, 18, 20, 9, 11, 13, 15]},
+                {name: 'D major', tonic: 5, dominant: 0, chords: [5, 19, 21, 10, 0, 14, 16]},
+                {name: 'Eb major', tonic: 6, dominant: 1, chords: [6, 20, 22, 11, 1, 15, 17]},
+                {name: 'E major', tonic: 7, dominant: 2, chords: [7, 21, 23, 0, 2, 16, 18]},
+                {name: 'F major', tonic: 8, dominant: 3, chords: [8, 22, 12, 1, 3, 17, 19]},
+                {name: 'Gb major', tonic: 9, dominant: 4, chords: [9, 23, 13, 2, 4, 18, 20]},
+                {name: 'G major', tonic: 10, dominant: 5, chords: [10, 12, 14, 3, 5, 19, 21]},
+                {name: 'Ab major', tonic: 11, dominant: 6, chords: [11, 13, 15, 4, 6, 20, 22]},
+                {name: 'A minor', tonic: 12, dominant: 19, chords: [12, 14, 3, 17, 19, 8, 10]},
+                {name: 'Bb minor', tonic: 13, dominant: 20, chords: [13, 15, 4, 18, 20, 9, 11]},
+                {name: 'B minor', tonic: 14, dominant: 21, chords: [14, 16, 5, 19, 21, 10, 0]},
+                {name: 'C minor', tonic: 15, dominant: 22, chords: [15, 17, 6, 20, 22, 11, 1]},
+                {name: 'Db minor', tonic: 16, dominant: 23, chords: [16, 18, 7, 21, 23, 0, 2]},
+                {name: 'D minor', tonic: 17, dominant: 12, chords: [17, 19, 8, 22, 12, 1, 3]},
+                {name: 'Eb minor', tonic: 18, dominant: 13, chords: [18, 20, 9, 23, 13, 2, 4]},
+                {name: 'E minor', tonic: 19, dominant: 14, chords: [19, 21, 10, 12, 14, 3, 5]},
+                {name: 'F minor', tonic: 20, dominant: 15, chords: [20, 22, 11, 13, 15, 4, 6]},
+                {name: 'Gb minor', tonic: 21, dominant: 16, chords: [21, 23, 0, 14, 16, 5, 7]},
+                {name: 'G minor', tonic: 22, dominant: 17, chords: [22, 12, 1, 15, 17, 6, 8]},
+                {name: 'Ab minor', tonic: 23, dominant: 18, chords: [23, 13, 2, 16, 18, 7, 9]},
+            ];
+            var scores = new Array(24).fill(0);
+            for (let i = 0; i < keys.length; i++) {
+                scores[i] = keys[i].chords.filter(chord => chords.includes(chord)).length + 
+                            2 * Number(chords.includes(keys[i].tonic)) +
+                            Number(chords.includes(keys[i].dominant));
+            }
+
+            return keys[argmax(scores)];
+        }
+
+        function transposeChords(key, chords) {
+            chords = [...new Set(chords.map(capitalize).filter(chord => chord2id(chord) != -1))];
+            var diff;
+            if (key.name.includes("major")) {
+                diff = (key.tonic - 3) % 12;
+            } else {
+                diff = key.tonic - 12;
+            }
+
+            var newChords = new Array(chords.length).fill("");
+
+            for (let i = 0; i < chords.length; i++) {
+                const oldId = chord2id(chords[i]);
+                var newId = -1;
+                if (oldId < 12) {
+                    newId = (oldId - diff + 12) % 12;
+                } else {
+                    newId = ((oldId - 12) - diff + 12) % 12 + 12;
+                }
+                const chordOptions = id2chord(newId);
+                if (chordOptions.length == 1) {
+                    newChords[i] = chordOptions[0];
+                } else if ((chords[i].includes("#") && chordOptions[0].includes("#")) ||
+                            (chords[i].includes("b") && chordOptions[0].includes("b"))) {
+                    newChords[i] = chordOptions[0];
+                } else {
+                    newChords[i] = chordOptions[1];
+                }
+            }
+
+            return newChords.map((newChord, index) => chords[index] + " → " + newChord);
+        }
+
+        function updateChords(transposedChords) {
+            // Get the list element
+            const chordList = document.getElementById("output-chords");
+
+            // Clear the list of any existing chords
+            chordList.innerHTML = "";
+
+            // Loop through the transposed chords and create new list items
+            for (let i = 0; i < transposedChords.length; i++) {
+                const chord = transposedChords[i];
+
+                // Create a new list item element
+                const listItem = document.createElement("li");
+
+                // Set the text content of the list item to the transposed chord
+                listItem.textContent = chord;
+
+                // Append the list item to the list
+                chordList.appendChild(listItem);
+            }
+        }
+    </script>
+  </body>
+</html>
