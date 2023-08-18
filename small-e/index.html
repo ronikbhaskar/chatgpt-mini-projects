@@ -45,19 +45,94 @@
   a {
     color: inherit;
   }
+  form {
+    display: block;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  input[type="range"]:focus {
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 5px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-top: -5px;
+    border: solid 2px black;
+  }
+
+  /* Firefox */
+  input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 5px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    border: solid 2px black;
+  }
+
+  /* Edge and IE */
+  input[type="range"]::-ms-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 5px;
+  }
+
+  input[type="range"]::-ms-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    border: solid 2px black;
+  }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 <div class="container">
   <h1>SMALL·E Image Generator</h1>
-  <p id="loading">Select an image, wait a few seconds, and see the results, all powered by your own browser. Click on a generated image to download it.</p>
-  <input type="file" accept="image/*" id="imageInput">
+  <p>Select an image, wait a few seconds, and see the results, all powered by your own browser. Click on a generated image to download it.</p>
+  <p>To be clear, there is no AI. It's just doing frequency analysis and mixing up a few pieces of data.</p>
+  <form>
+    <label>Randomness:<span id="rand"></span></label>
+    <input type="range" id="randomnessSlider" min="1" max="1000" step="1">
+    <label>Frequency Threshold:<span id="freq"></span></label>
+    <input type="range" id="frequencyThreshold" min="128" max="256">
+    <input type="file" accept="image/*" id="imageInput">
+  </form>
   <div class="images">
     <div id="imageContainer" class="input-image-container"></div>
     <div id="canvases" class="canvases-container">
-      <canvas id="canvas1" width="200" height="200"></canvas>
-      <canvas id="canvas2" width="200" height="200"></canvas>
-      <canvas id="canvas3" width="200" height="200"></canvas>
+      <canvas id="canvas1" width="256" height="256"></canvas>
+      <canvas id="canvas2" width="256" height="256"></canvas>
+      <canvas id="canvas3" width="256" height="256"></canvas>
     </div>
   </div>
   <footer class="sticky-footer">
@@ -65,186 +140,8 @@
   </footer>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/ronikbhaskar/text_generator/src/markov.js" defer></script>
+<script src="fourier.js" defer></script>
+<script src="frontend.js"></script>
 
-<script>
-  const imageInput = document.getElementById('imageInput');
-  const imageContainer = document.getElementById('imageContainer');
-  const canvas1 = document.getElementById('canvas1');
-  const canvas2 = document.getElementById('canvas2');
-  const canvas3 = document.getElementById('canvas3');
-  const loading = document.getElementById("loading");
-  const canvases = [canvas1, canvas2, canvas3];
-  const WIDTH = 200;
-  const HEIGHT = 200;
-
-  imageInput.addEventListener('change', handleImageUpload);
-
-  for (let i = 0; i < canvases.length; i++) {
-    canvases[i].addEventListener("click", (event) => {
-      event.preventDefault();
-      const dataURL = canvases[i].toDataURL('image/jpeg'); // Change to 'image/jpeg' for JPEG format
-      const link = document.createElement('a');
-      link.href = dataURL;
-      link.download = 'markov-image.jpg'; // Change the filename as needed
-      link.click();
-    });
-  }
-
-  function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const image = new Image();
-        image.src = e.target.result;
-        image.onload = function() {
-          displayImage(image);
-        //   drawImageOnCanvas(image);
-          let pixelValues = readImagePixelValues(image);
-          const markov = new AssociationTable();
-          /* train left to right and right to left */
-          for (let i = 0; i < pixelValues.length; i++) {
-            let rgbs = pixelValues[0].map(rgbToString)
-            markov.train(rgbs);
-            markov.train(rgbs.reverse());
-          }
-
-          /* train top to bottom and bottom to top */
-          pixelValues = transpose(pixelValues);
-          for (let i = 0; i < pixelValues.length; i++) {
-            let rgbs = pixelValues[0].map(rgbToString);
-            markov.train(rgbs);
-            markov.train(rgbs.reverse());
-          }
-
-          markov.updateProbabilities();
-          for (let i = 0; i < canvases.length; i++) {
-            drawMarkovToCanvas(markov, canvases[i]);
-          }
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  function displayLoading() {
-    loading.innerText = "loading";
-  }
-
-  function undisplayLoading() {
-    loading.innerText = "";
-  }
-
-  function rgbToString(rgba) {
-    return `${rgba.r},${rgba.g},${rgba.b},${rgba.a}`;
-  }
-
-  function stringToRGB(rgbString) {
-    const rgba = rgbString.split(",");
-    return {
-        r: Number(rgba[0]),
-        g: Number(rgba[1]),
-        b: Number(rgba[2]),
-        a: Number(rgba[3])
-    };
-  }
-
-  function displayImage(image) {
-    imageContainer.innerHTML = '';
-    const imgElement = document.createElement('img');
-    imgElement.src = image.src;
-    imgElement.style.maxWidth = '100%';
-    imgElement.style.height = 'auto';
-    imageContainer.appendChild(imgElement);
-  }
-
-  function readImagePixelValues(image) {
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  
-    const pixelData = context.getImageData(0, 0, canvas.width, canvas.height).data;
-    const pixelValues = [];
-  
-    for (let y = 0; y < canvas.height; y++) {
-      const row = [];
-      for (let x = 0; x < canvas.width; x++) {
-        const offset = (y * canvas.width + x) * 4;
-        const red = pixelData[offset];
-        const green = pixelData[offset + 1];
-        const blue = pixelData[offset + 2];
-        const alpha = pixelData[offset + 3];
-        row.push({ r: red, g: green, b: blue, a: alpha });
-      }
-      pixelValues.push(row);
-    }
-  
-    return pixelValues;
-  }
-
-  function drawPixelValuesToCanvas(pixelValues, canvas) {
-    const ctx = canvas.getContext('2d');
-    const width = pixelValues[0].length;
-    const height = pixelValues.length;
-  
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
-  
-    const imageData = ctx.createImageData(width, height);
-  
-    for (let y = 0; y < HEIGHT; y++) {
-      for (let x = 0; x < WIDTH; x++) {
-        const pixel = pixelValues[y][x];
-        const offset = (y * width + x) * 4;
-  
-        imageData.data[offset] = pixel.r;
-        imageData.data[offset + 1] = pixel.g;
-        imageData.data[offset + 2] = pixel.b;
-        imageData.data[offset + 3] = pixel.a;
-      }
-    }
-  
-    ctx.putImageData(imageData, 0, 0);
-  }
-
-  function drawMarkovToCanvas(markov, canvas) {
-    const pixelValues = [];
-
-    for (let i = 0; i < HEIGHT; i++) {
-        row = markov.genText(WIDTH).split(" ").map(stringToRGB);
-        pixelValues.push(row);
-    }
-
-    /* 2D generation down and right */
-    for (let count = 0; count < 50; count++) {
-        for (let i = 1; i < HEIGHT - 1; i++) {
-            for (let j = 1; j < WIDTH - 1; j++) {
-                let rand = Math.random();
-                if (rand < 0.25) 
-                    pixelValues[i][j] = stringToRGB(markov.seededGenText(rgbToString(pixelValues[i][j - 1]), 1));
-                else if (rand < 0.5)
-                    pixelValues[i][j] = stringToRGB(markov.seededGenText(rgbToString(pixelValues[i - 1][j]), 1)); 
-                else if (rand < 0.75)
-                    pixelValues[i][j] = stringToRGB(markov.seededGenText(rgbToString(pixelValues[i][j + 1]), 1)); 
-                else
-                    pixelValues[i][j] = stringToRGB(markov.seededGenText(rgbToString(pixelValues[i + 1][j]), 1)); 
-            }
-        }
-    }
-    
-
-    drawPixelValuesToCanvas(pixelValues, canvas);
-  }
-
-  function transpose(matrix) {
-    return matrix[0].map((col, i) => matrix.map(row => row[i]));
-  }
-
-  
-
-</script>
 </body>
 </html>
